@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container py-5">
+    <div class="row mb-5">
+        <div class="col-md-12 text-center mb-4">
+            <h1 class="display-4 fw-bold">Explore <span class="text-primary">Spare Parts</span></h1>
+            <p class="text-secondary">Genuine components for your two-stroke machines</p>
+        </div>
+
+        <!-- Search and Filter Bar -->
+        <div class="col-12">
+            <div class="glass-card p-4">
+                <form method="get" class="row g-3">
+                    <div class="col-md-5">
+                        <div class="input-group">
+                            <span class="input-group-text bg-dark border-secondary text-primary"><i
+                                    class="bi bi-search"></i></span>
+                            <input type="text" name="q" class="form-control"
+                                placeholder="Search by name, model, or code..." value="{{ query|default:'' }}">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <select name="category" class="form-select">
+                            <option value="">All Categories</option>
+                            {% for category in categories %}
+                            <option value="{{ category.id }}" {% if selected_category==category.id %}selected{% endif
+                                %}>{{ category.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <button type="submit" class="btn btn-sparetrack-primary w-100">Filter Results</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Product Grid -->
+    <div class="row g-4">
+        {% for product in products %}
+        <div class="col-md-4 col-lg-3">
+            <div class="glass-card h-100 p-0 overflow-hidden border-0 shadow-sm product-card">
+                <div class="position-relative">
+                    {% if product.image %}
+                    <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}"
+                        style="height: 200px; object-fit: cover;">
+                    {% else %}
+                    <div class="bg-dark d-flex align-items-center justify-content-center text-secondary"
+                        style="height: 200px;">
+                        <i class="bi bi-image display-4"></i>
+                    </div>
+                    {% endif %}
+                    <div class="position-absolute top-0 end-0 m-2">
+                        <span class="badge bg-primary">${{ product.price }}</span>
+                    </div>
+                </div>
+                <div class="p-3">
+                    <small class="text-accent text-uppercase fw-bold">{{ product.category.name|default:"Uncategorized"
+                        }}</small>
+                    <h5 class="mt-1 mb-2">{{ product.name }}</h5>
+                    <p class="text-secondary small mb-3">{{ product.vehicle_model }}</p>
+                    <div class="d-grid">
+                        <a href="{% url 'product_detail' product.pk %}" class="btn btn-outline-primary btn-sm">View
+                            Details</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center py-5">
+            <i class="bi bi-search display-1 text-secondary opacity-25 mb-3"></i>
+            <h3 class="text-secondary">No parts found matching your criteria.</h3>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<style>
+    .product-card {
+        transition: all 0.3s ease;
+    }
+
+    .product-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(14, 165, 233, 0.1) !important;
+        border: 1px solid rgba(14, 165, 233, 0.2) !important;
+    }
+
+    .form-control,
+    .form-select {
+        background-color: rgba(15, 23, 42, 0.8) !important;
+        border: 1px solid rgba(14, 165, 233, 0.3) !important;
+        color: white !important;
+    }
+</style>
+{% endblock %}

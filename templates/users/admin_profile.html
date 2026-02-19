@@ -1,0 +1,254 @@
+{% extends 'users/admin/admin_layout.html' %}
+{% block admin_title %}Profile{% endblock %}
+{% block admin_extra_css %}
+<style>
+    .profile-photo-container {
+        position: relative;
+        width: 150px;
+        height: 150px;
+        margin: 0 auto 20px;
+    }
+
+    .profile-photo {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 50%;
+        border: 3px solid var(--primary-color);
+        padding: 4px;
+        background: #FFFFFF;
+    }
+
+    .photo-upload-btn {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        background: var(--primary-color);
+        color: #FFF;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        border: 3px solid #FFF;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .status-badge {
+        font-size: 0.75rem;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-weight: 600;
+        text-transform: uppercase;
+        border: 1px solid;
+    }
+
+    .status-active {
+        background: #F0FDF4;
+        color: #166534;
+        border-color: #BBF7D0;
+    }
+
+    /* Force alignment for form fields that might not have Bootstrap classes */
+    .glass-card input,
+    .glass-card textarea,
+    .glass-card select {
+        display: block;
+        width: 100%;
+        padding: 0.75rem 1rem;
+        font-size: 0.9rem;
+        color: #1E293B;
+        background-color: #F8FAFC;
+        border: 1px solid #E2E8F0;
+        border-radius: 10px;
+        transition: all 0.2s ease;
+    }
+
+    .glass-card input:focus,
+    .glass-card textarea:focus {
+        background-color: #FFF;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 4px rgba(2, 132, 199, 0.1);
+        outline: none;
+    }
+
+    .password-field-group {
+        display: grid;
+        grid-template-columns: 1fr 2fr;
+        align-items: center;
+        gap: 20px;
+        margin-bottom: 15px;
+    }
+
+    @media (max-width: 768px) {
+        .password-field-group {
+            grid-template-columns: 1fr;
+            gap: 5px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block admin_content %}
+<div class="row g-4">
+    <div class="col-lg-4">
+        <div class="glass-card text-center">
+            <form action="{% url 'admin_profile' %}" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="profile-photo-container">
+                    {% if user.profile_picture %}
+                    <img src="{{ user.profile_picture.url }}" alt="Profile" class="profile-photo">
+                    {% else %}
+                    <div
+                        class="profile-photo d-flex align-items-center justify-content-center bg-light text-primary fs-1 fw-bold">
+                        {{ user.username|first|upper }}
+                    </div>
+                    {% endif %}
+                    <label for="id_profile_picture" class="photo-upload-btn">
+                        <i class="bi bi-camera-fill"></i>
+                    </label>
+                    <input type="file" name="profile_picture" id="id_profile_picture" class="d-none">
+                </div>
+
+                <h4 class="text-dark fw-bold mb-1">{{ user.get_full_name|default:user.username }}</h4>
+                <p class="text-primary small mb-3">@{{ user.username }}</p>
+                <span class="status-badge status-active">Administrator</span>
+
+                <div class="text-start mt-4 pt-4 border-top">
+                    <div class="mb-3">
+                        <label class="small text-muted fw-bold mb-1 text-uppercase"
+                            style="font-size: 0.65rem;">Email</label>
+                        <div class="text-dark">{{ user.email }}</div>
+                    </div>
+                    <div class="mb-0">
+                        <label class="small text-muted fw-bold mb-1 text-uppercase"
+                            style="font-size: 0.65rem;">Contact</label>
+                        <div class="text-dark">{{ user.phone_number|default:"Not provided" }}</div>
+                    </div>
+                </div>
+        </div>
+    </div>
+
+    <div class="col-lg-8">
+        {% if request.GET.section == 'password' %}
+        <!-- Change Password Section -->
+        <div class="glass-card border-0 shadow-sm animate-fade-in">
+            <h5 class="text-dark fw-bold mb-4"><i class="bi bi-shield-lock me-2 text-warning"></i> Security & Password
+            </h5>
+            <form action="{% url 'admin_profile' %}?section=password" method="POST">
+                {% csrf_token %}
+                <div class="mt-2">
+                    {% for field in password_form %}
+                    <div class="password-field-group">
+                        <label class="small text-muted fw-bold text-uppercase mb-0"
+                            style="font-size: 0.7rem; letter-spacing: 0.5px;">{{ field.label }}</label>
+                        <div class="position-relative">
+                            {{ field }}
+                            <button type="button"
+                                class="btn btn-link position-absolute end-0 top-50 translate-middle-y text-secondary text-decoration-none py-0 toggle-password"
+                                style="z-index: 10;">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                            {% if field.errors %}
+                            <div class="text-danger small mt-1">{{ field.errors|striptags }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                <div class="mt-4 pt-3 border-top d-flex justify-content-between align-items-center">
+                    <button type="submit" name="change_password"
+                        class="btn btn-warning px-5 rounded-pill shadow-sm fw-bold">
+                        Update Password
+                    </button>
+                    <a href="{% url 'admin_profile' %}?section=edit"
+                        class="text-primary small text-decoration-none fw-bold">Edit Profile instead?</a>
+                </div>
+            </form>
+        </div>
+        {% else %}
+        <!-- Edit Profile Section (Default) -->
+        <div class="glass-card mb-4 shadow-sm border-0 animate-fade-in">
+            <h5 class="text-dark fw-bold mb-4"><i class="bi bi-person-gear me-2 text-primary"></i> Account Settings</h5>
+            <form action="{% url 'admin_profile' %}?section=edit" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="small text-muted mb-1 fw-bold">First Name</label>
+                        {{ profile_form.first_name }}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="small text-muted mb-1 fw-bold">Last Name</label>
+                        {{ profile_form.last_name }}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="small text-muted mb-1 fw-bold">Email Address</label>
+                        {{ profile_form.email }}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="small text-muted mb-1 fw-bold">Phone Number</label>
+                        {{ profile_form.phone_number }}
+                    </div>
+                    <div class="col-12">
+                        <label class="small text-muted mb-1 fw-bold">Address</label>
+                        {{ profile_form.address }}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="small text-muted mb-1 fw-bold">Date of Birth</label>
+                        {{ profile_form.date_of_birth }}
+                    </div>
+                </div>
+                <div class="mt-4 pt-3 border-top d-flex justify-content-between align-items-center">
+                    <button type="submit" name="update_profile"
+                        class="btn btn-primary px-5 rounded-pill shadow-sm fw-bold">
+                        Save Changes
+                    </button>
+                    <a href="{% url 'admin_profile' %}?section=password"
+                        class="text-warning small text-decoration-none fw-bold">Change Password?</a>
+                </div>
+            </form>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.getElementById('id_profile_picture').addEventListener('change', function (e) {
+        if (e.target.files && e.target.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const preview = document.querySelector('.profile-photo');
+                if (preview.tagName === 'IMG') { preview.src = e.target.result; }
+                else {
+                    const newImg = document.createElement('img');
+                    newImg.src = e.target.result;
+                    newImg.className = 'profile-photo';
+                    preview.replaceWith(newImg);
+                }
+            }
+            reader.readAsDataURL(e.target.files[0]);
+        }
+    });
+
+    // Password Visibility Toggle Logic
+    document.querySelectorAll('.toggle-password').forEach(button => {
+        button.addEventListener('click', function () {
+            const input = this.parentElement.querySelector('input');
+            const icon = this.querySelector('i');
+
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.replace('bi-eye', 'bi-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.replace('bi-eye-slash', 'bi-eye');
+            }
+        });
+    });
+</script>
+{% endblock %}

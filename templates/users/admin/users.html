@@ -1,0 +1,122 @@
+{% extends 'users/admin/admin_layout.html' %}
+{% block admin_title %}User Management{% endblock %}
+{% block admin_content %}
+<div class="glass-card mb-5 border-0 shadow-sm">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 class="text-dark fw-bold mb-0">User Directory</h4>
+        <a href="{% url 'admin_add_user' %}" class="btn btn-primary btn-sm rounded-pill px-4"><i
+                class="bi bi-person-plus me-2"></i> Add New User</a>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead>
+                <tr>
+                    <th>User</th>
+                    <th class="text-center">Role</th>
+                    <th class="text-center">Status</th>
+                    <th class="text-center">Joined</th>
+                    <th class="text-center">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in all_users %}
+                <tr>
+                    <td>
+                        <div class="fw-bold text-dark">{{ user.username }}</div>
+                        <small class="text-muted">{{ user.email }}</small>
+                    </td>
+                    <td class="text-center">
+                        <span
+                            class="badge {% if user.role == 'admin' %}bg-danger-subtle text-danger{% elif user.role == 'seller' %}bg-warning-subtle text-warning{% else %}bg-primary-subtle text-primary{% endif %}">
+                            {{ user.role|upper }}
+                        </span>
+                    </td>
+                    <td class="text-center">
+                        {% if not user.is_active %}
+                        <span class="badge bg-danger-subtle text-danger">Blocked</span>
+                        {% else %}
+                        {% if user.role == 'seller' %}
+                        <span
+                            class="badge {% if user.is_approved %}bg-success-subtle text-success{% else %}bg-warning-subtle text-warning{% endif %}">
+                            {% if user.is_approved %}Verified{% else %}Pending{% endif %}
+                        </span>
+                        {% else %}
+                        <span class="badge bg-success-subtle text-success">Active</span>
+                        {% endif %}
+                        {% endif %}
+                    </td>
+                    <td class="text-muted small text-center">{{ user.date_joined|date:"d M Y" }}</td>
+                    <td class="text-center">
+                        <div class="dropdown">
+                            <button class="btn btn-light btn-sm rounded-pill px-3 fw-bold dropdown-toggle border"
+                                type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-gear-fill me-1"></i> Manage
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg p-2"
+                                style="border-radius: 12px; min-width: 180px;">
+                                {% if user.role == 'seller' and not user.is_approved %}
+                                <li>
+                                    <a class="dropdown-item py-2 px-3 rounded-2 text-success fw-bold"
+                                        href="{% url 'approve_seller' user.id %}">
+                                        <i class="bi bi-check-circle me-2"></i> Approve Seller
+                                    </a>
+                                </li>
+                                <li>
+                                    <hr class="dropdown-divider opacity-50">
+                                </li>
+                                {% endif %}
+
+                                <li>
+                                    <a class="dropdown-item py-2 px-3 rounded-2 text-dark"
+                                        href="{% url 'toggle_user_status' user.id %}">
+                                        {% if user.is_active %}
+                                        <i class="bi bi-slash-circle me-2 text-warning"></i> Block User
+                                        {% else %}
+                                        <i class="bi bi-play-circle me-2 text-success"></i> Unblock User
+                                        {% endif %}
+                                    </a>
+                                </li>
+
+                                <li>
+                                    <hr class="dropdown-divider opacity-50">
+                                </li>
+
+                                <li>
+                                    <button class="dropdown-item py-2 px-3 rounded-2 text-danger" type="button"
+                                        data-bs-toggle="modal" data-bs-target="#deleteModal{{ user.id }}">
+                                        <i class="bi bi-trash me-2"></i> Remove User
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Render Modals Outside Table Structure -->
+{% for user in all_users %}
+<div class="modal fade" id="deleteModal{{ user.id }}" tabindex="-1" aria-hidden="true" data-bs-backdrop="static"
+    data-bs-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 15px;">
+            <div class="modal-body p-4 text-center">
+                <i class="bi bi-exclamation-triangle text-danger display-4 mb-3"></i>
+                <h5 class="fw-bold mb-2">Confirm Removal</h5>
+                <p class="text-secondary small mb-4">You are about to permanently delete <b>{{ user.username }}</b>.
+                    This action is irreversible.</p>
+                <div class="d-flex justify-content-center gap-3">
+                    <button type="button" class="btn btn-light rounded-pill px-4"
+                        data-bs-dismiss="modal">Cancel</button>
+                    <a href="{% url 'delete_user' user.id %}" class="btn btn-danger rounded-pill px-4">Confirm
+                        Delete</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+{% endblock %}

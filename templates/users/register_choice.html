@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center align-items-center min-vh-75 text-center">
+        <div class="col-md-8">
+            <h2 class="mb-5 text-dark fw-bold">Join the <span class="text-primary">SpareTrack</span> Community</h2>
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <div class="glass-card h-100 d-flex flex-column border-0 shadow-sm bg-white p-4">
+                        <div class="mb-4">
+                            <i class="bi bi-person-fill display-4 text-primary mb-3"></i>
+                            <h3 class="text-dark fw-bold">Customer</h3>
+                            <p class="text-secondary small">Browse, search, and buy spare parts for your two-stroke
+                                machines.</p>
+                        </div>
+                        <div class="mt-auto">
+                            <a href="{% url 'register_customer' %}"
+                                class="btn btn-sparetrack-primary w-100 rounded-pill py-2">Register as Customer</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="glass-card h-100 d-flex flex-column border-0 shadow-sm bg-white p-4">
+                        <div class="mb-4">
+                            <i class="bi bi-tools display-4 text-primary mb-3"></i>
+                            <h3 class="text-dark fw-bold">Seller</h3>
+                            <p class="text-secondary small">List your inventory, manage orders, and grow your workshop
+                                business.</p>
+                        </div>
+                        <div class="mt-auto">
+                            <a href="{% url 'register_seller' %}"
+                                class="btn btn-sparetrack-outline w-100 rounded-pill py-2">Register as Seller</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <p class="mt-5 text-secondary">Already have an account? <a href="{% url 'login' %}"
+                    class="text-primary text-decoration-none fw-bold">Login here</a></p>
+        </div>
+    </div>
+</div>
+{% endblock %}

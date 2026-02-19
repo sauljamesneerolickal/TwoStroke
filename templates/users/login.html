@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center align-items-center min-vh-75">
+        <div class="col-md-5">
+            <div class="glass-card animate-fade-in shadow-lg border-0 bg-white">
+                <h2 class="text-center mb-4 text-dark fw-bold">Login to <span class="text-primary">SpareTrack</span>
+                </h2>
+                <form method="post">
+                    {% csrf_token %}
+                    {% for field in form %}
+                    <div class="mb-4">
+                        <label class="form-label text-dark fw-bold small text-uppercase" style="letter-spacing: 1px;">{{
+                            field.label }}</label>
+                        {{ field }}
+                        {% if field.errors %}
+                        <div class="text-danger small mt-1">
+                            {{ field.errors|striptags }}
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                    <button type="submit"
+                        class="btn btn-sparetrack-primary w-100 mb-3 py-3 fs-5 fw-bold rounded-pill">Login</button>
+                    <p class="text-center text-secondary small">Don't have an account? <a href="{% url 'register' %}"
+                            class="text-primary text-decoration-none fw-bold">Register here</a></p>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .form-control {
+        background-color: #F8FAFC !important;
+        border: 1px solid #E2E8F0 !important;
+        color: #1E293B !important;
+        padding: 0.8rem 1rem !important;
+        border-radius: 12px !important;
+        width: 100% !important;
+        transition: all 0.2s ease !important;
+    }
+
+    .form-control:focus {
+        background-color: #FFFFFF !important;
+        border-color: var(--primary-color) !important;
+        box-shadow: 0 0 0 4px rgba(2, 132, 199, 0.1) !important;
+    }
+
+    .form-label {
+        font-size: 0.75rem;
+    }
+</style>
+{% endblock %}

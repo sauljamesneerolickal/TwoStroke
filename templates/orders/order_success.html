@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 text-center">
+            <div class="glass-card shadow-lg py-5 animate-fade-in border-success">
+                <div class="mb-4">
+                    <i class="bi bi-check-circle-fill text-success" style="font-size: 5rem;"></i>
+                </div>
+                <h1 class="display-4 fw-bold mb-3">Order <span class="text-primary">Confirmed!</span></h1>
+                <p class="lead text-secondary mb-4">Thank you for your purchase. Your order has been placed
+                    successfully.</p>
+
+                <div class="bg-dark rounded-4 p-4 mb-4 mx-auto" style="max-width: 400px;">
+                    <p class="mb-1 text-muted small text-uppercase fw-bold">Order ID</p>
+                    <h2 class="text-primary mb-0">{{ order.order_id }}</h2>
+                </div>
+
+                <p class="text-secondary mb-5">We've sent a confirmation email to <strong>{{ order.email }}</strong>.
+                    You can track your order status in your dashboard.</p>
+
+                <div class="d-flex justify-content-center gap-3">
+                    <a href="{% url 'customer_dashboard' %}" class="btn btn-sparetrack-primary px-4 py-2">Go to
+                        Dashboard</a>
+                    <a href="{% url 'product_catalog' %}" class="btn btn-sparetrack-outline px-4 py-2">Continue
+                        Shopping</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

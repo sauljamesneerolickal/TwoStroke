@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container py-5">
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'product_catalog' %}"
+                    class="text-primary text-decoration-none">Catalog</a></li>
+            <li class="breadcrumb-item active text-secondary" aria-current="page">{{ product.name }}</li>
+        </ol>
+    </nav>
+
+    <div class="glass-card p-4 p-md-5">
+        <div class="row g-5">
+            <div class="col-md-6">
+                {% if product.image %}
+                <img src="{{ product.image.url }}" class="img-fluid rounded-4 shadow" alt="{{ product.name }}">
+                {% else %}
+                <div class="bg-dark rounded-4 d-flex align-items-center justify-content-center text-secondary py-5">
+                    <i class="bi bi-image display-1"></i>
+                </div>
+                {% endif %}
+            </div>
+            <div class="col-md-6">
+                <span class="badge bg-primary mb-3">{{ product.category.name|default:"General" }}</span>
+                <h1 class="display-5 fw-bold mb-2">{{ product.name }}</h1>
+                <p class="text-accent h3 mb-4">${{ product.price }}</p>
+
+                <div class="mb-4">
+                    <h5 class="text-light border-bottom border-secondary pb-2">Specifications</h5>
+                    <table class="table table-borderless text-secondary small">
+                        <tr>
+                            <td width="150">Part Code:</td>
+                            <td class="text-light">{{ product.code }}</td>
+                        </tr>
+                        <tr>
+                            <td>Vehicle Model:</td>
+                            <td class="text-light">{{ product.vehicle_model }}</td>
+                        </tr>
+                        <tr>
+                            <td>Availability:</td>
+                            <td>
+                                {% if product.stock_quantity > 0 %}
+                                <span class="text-success fw-bold">In Stock ({{ product.stock_quantity }} units)</span>
+                                {% else %}
+                                <span class="text-danger fw-bold">Out of Stock</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Seller:</td>
+                            <td class="text-light">{{ product.seller.username }} <small
+                                    class="text-primary fw-bold">Verified</small></td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div class="mb-5">
+                    <h5 class="text-light border-bottom border-secondary pb-2">Description</h5>
+                    <p class="text-secondary">{{ product.description }}</p>
+                </div>
+
+                <form action="{% url 'cart_add' product.pk %}" method="post" class="d-flex gap-2">
+                    {% csrf_token %}
+                    <div class="input-group" style="width: 150px;">
+                        <button class="btn btn-outline-secondary" type="button" onclick="decrement()">-</button>
+                        <input type="number" id="quantity" name="quantity"
+                            class="form-control text-center bg-dark text-white border-secondary" value="1" min="1"
+                            max="{{ product.stock_quantity }}" data-max="{{ product.stock_quantity }}">
+                        <button class="btn btn-outline-secondary" type="button" onclick="increment()">+</button>
+                    </div>
+                    <button type="submit" class="btn btn-sparetrack-primary flex-grow-1" {% if product.stock_quantity==0
+                        %}disabled{% endif %}>
+                        <i class="bi bi-cart-plus"></i> Add to Cart
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function increment() {
+        const input = document.getElementById('quantity');
+        const maxStock = parseInt(input.getAttribute('data-max'));
+        const currentValue = parseInt(input.value);
+        if (currentValue < maxStock) {
+            input.value = currentValue + 1;
+        }
+    }
+    function decrement() {
+        const input = document.getElementById('quantity');
+        const currentValue = parseInt(input.value);
+        if (currentValue > 1) {
+            input.value = currentValue - 1;
+        }
+    }
+</script>
+{% endblock %}

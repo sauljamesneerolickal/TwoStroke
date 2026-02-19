@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container py-5">
+    <div class="row g-4">
+        <div class="col-md-12">
+            <h1 class="text-primary mb-4">Hello, <span class="text-accent">{{ user.username }}</span></h1>
+        </div>
+        <div class="col-md-8">
+            <div class="glass-card shadow-lg p-5 text-center">
+                <i class="bi bi-gear-wide-connected display-1 text-primary mb-4"></i>
+                <h2>Ready to fix your machine?</h2>
+                <p class="text-secondary mb-4">Browse our extensive catalog of genuine two-stroke spare parts.</p>
+                <a href="{% url 'product_catalog' %}" class="btn btn-sparetrack-primary btn-lg px-5">Go to Catalog</a>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="glass-card h-100">
+                <h4 class="mb-4">Recent Orders</h4>
+                <div class="text-center py-5">
+                    <p class="text-secondary opacity-50">You haven't placed any orders yet.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

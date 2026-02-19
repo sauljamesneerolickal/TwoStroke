@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container py-5">
+    <h1 class="text-primary mb-4">Your <span class="text-accent">Shopping Cart</span></h1>
+
+    <div class="row g-4">
+        {% if cart %}
+        <div class="col-lg-8">
+            <div class="glass-card p-0 overflow-hidden shadow">
+                <div class="table-responsive">
+                    <table class="table table-hover text-light align-middle mb-0">
+                        <thead class="text-primary bg-darker">
+                            <tr>
+                                <th class="ps-4">Product</th>
+                                <th>Price</th>
+                                <th>Quantity</th>
+                                <th>Total</th>
+                                <th class="pe-4"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in cart %}
+                            {% with product=item.product %}
+                            <tr>
+                                <td class="ps-4">
+                                    <div class="d-flex align-items-center">
+                                        {% if product.image %}
+                                        <img src="{{ product.image.url }}" alt="{{ product.name }}"
+                                            style="width: 60px; height: 60px; object-fit: cover; border-radius: 8px;"
+                                            class="me-3">
+                                        {% else %}
+                                        <div class="bg-dark rounded d-flex align-items-center justify-content-center me-3"
+                                            style="width: 60px; height: 60px;">
+                                            <i class="bi bi-image text-secondary"></i>
+                                        </div>
+                                        {% endif %}
+                                        <div>
+                                            <h6 class="mb-0">{{ product.name }}</h6>
+                                            <small class="text-secondary">{{ product.vehicle_model }}</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>${{ item.price }}</td>
+                                <td>{{ item.quantity }}</td>
+                                <td class="fw-bold text-accent">${{ item.total_price }}</td>
+                                <td class="pe-4 text-end">
+                                    <a href="{% url 'cart_remove' product.id %}" class="btn btn-outline-danger btn-sm">
+                                        <i class="bi bi-trash"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endwith %}
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="glass-card shadow">
+                <h4 class="mb-4">Order Summary</h4>
+                <div class="d-flex justify-content-between mb-3 text-secondary">
+                    <span>Subtotal</span>
+                    <span>${{ cart.get_total_price }}</span>
+                </div>
+                <div class="d-flex justify-content-between mb-3 text-secondary">
+                    <span>Shipping</span>
+                    <span class="text-success">FREE</span>
+                </div>
+                <hr class="border-secondary opacity-25">
+                <div class="d-flex justify-content-between mb-4">
+                    <h5 class="mb-0">Total</h5>
+                    <h4 class="mb-0 text-primary">${{ cart.get_total_price }}</h4>
+                </div>
+                <a href="#" class="btn btn-sparetrack-primary w-100 py-3 mb-3">Proceed to Checkout</a>
+                <a href="{% url 'product_catalog' %}" class="btn btn-sparetrack-outline w-100 py-3">Continue
+                    Shopping</a>
+            </div>
+        </div>
+        {% else %}
+        <div class="col-12 text-center py-5">
+            <div class="glass-card shadow py-5">
+                <i class="bi bi-cart-x display-1 text-secondary opacity-25 mb-4"></i>
+                <h2 class="text-secondary">Your cart is empty</h2>
+                <p class="text-muted mb-4">Looks like you haven't added anything to your cart yet.</p>
+                <a href="{% url 'product_catalog' %}" class="btn btn-sparetrack-primary px-5 py-2">Start Shopping</a>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

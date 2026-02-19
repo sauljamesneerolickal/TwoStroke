@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="glass-card shadow-lg animate-fade-in">
+                <h2 class="text-primary mb-4">{{ title }}</h2>
+                <form method="post" enctype="multipart/form-data" class="needs-validation">
+                    {% csrf_token %}
+                    <div class="row g-3">
+                        {% for field in form %}
+                        <div
+                            class="{% if field.name == 'description' or field.name == 'is_active' %}col-12{% else %}col-md-6{% endif %} mb-3">
+                            <label class="form-label text-light">{{ field.label }}</label>
+                            {{ field }}
+                            {% if field.errors %}
+                            <div class="text-danger small mt-1">
+                                {{ field.errors|striptags }}
+                            </div>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <div class="d-flex gap-3">
+                        <button type="submit" class="btn btn-sparetrack-primary px-4">Save Product</button>
+                        <a href="{% url 'seller_dashboard' %}" class="btn btn-sparetrack-outline px-4">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .form-control,
+    .form-select {
+        background-color: rgba(15, 23, 42, 0.8) !important;
+        border: 1px solid rgba(14, 165, 233, 0.3) !important;
+        color: white !important;
+    }
+
+    .form-check-input {
+        background-color: rgba(15, 23, 42, 0.8);
+        border: 1px solid var(--primary-color);
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="text-primary">Seller <span class="text-accent">Panel</span></h1>
+        <a href="{% url 'product_add' %}" class="btn btn-sparetrack-primary"><i class="bi bi-plus-lg"></i> Add New
+            Product</a>
+    </div>
+
+    <div class="glass-card shadow-lg">
+        <h3 class="mb-4">Your Inventory</h3>
+        <div class="table-responsive">
+            <table class="table table-hover text-light align-middle">
+                <thead class="text-primary">
+                    <tr>
+                        <th>Image</th>
+                        <th>Name & Code</th>
+                        <th>Vehicle Model</th>
+                        <th>Price</th>
+                        <th>Stock</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for product in products %}
+                    <tr>
+                        <td>
+                            {% if product.image %}
+                            <img src="{{ product.image.url }}" alt="{{ product.name }}"
+                                style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px;">
+                            {% else %}
+                            <div class="bg-dark rounded d-flex align-items-center justify-content-center"
+                                style="width: 50px; height: 50px;">
+                                <i class="bi bi-image text-secondary"></i>
+                            </div>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="fw-bold">{{ product.name }}</div>
+                            <small class="text-secondary">{{ product.code }}</small>
+                        </td>
+                        <td>{{ product.vehicle_model }}</td>
+                        <td class="text-accent fw-bold">${{ product.price }}</td>
+                        <td>
+                            <span
+                                class="badge {% if product.stock_quantity > 10 %}bg-success{% elif product.stock_quantity > 0 %}bg-warning{% else %}bg-danger{% endif %} text-dark">
+                                {{ product.stock_quantity }}
+                            </span>
+                        </td>
+                        <td>
+                            {% if product.is_active %}
+                            <span class="text-success"><i class="bi bi-check-circle-fill"></i> Active</span>
+                            {% else %}
+                            <span class="text-danger"><i class="bi bi-x-circle-fill"></i> Inactive</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="btn-group btn-group-sm">
+                                <a href="{% url 'product_edit' product.pk %}" class="btn btn-outline-primary"><i
+                                        class="bi bi-pencil"></i></a>
+                                <a href="{% url 'product_delete' product.pk %}" class="btn btn-outline-danger"><i
+                                        class="bi bi-trash"></i></a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="text-center py-5 text-secondary">
+                            <i class="bi bi-box-seam display-1 d-block mb-3"></i>
+                            No products found. Click "Add New Product" to start selling.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<style>
+    .table-hover tbody tr:hover {
+        background-color: rgba(14, 165, 233, 0.05);
+        cursor: pointer;
+    }
+
+    .table td {
+        border-color: rgba(255, 255, 255, 0.05);
+    }
+
+    .table th {
+        border-bottom: 2px solid rgba(14, 165, 233, 0.2);
+    }
+</style>
+{% endblock %}

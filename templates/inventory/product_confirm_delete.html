@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="glass-card shadow-lg text-center animate-fade-in border-danger">
+                <i class="bi bi-exclamation-triangle display-1 text-danger mb-4"></i>
+                <h2 class="mb-3">Delete Product?</h2>
+                <p class="text-secondary mb-4">Are you sure you want to delete <strong>"{{ product.name }}"</strong>?
+                    This action cannot be undone.</p>
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="d-flex justify-content-center gap-3">
+                        <button type="submit" class="btn btn-danger px-4">Yes, Delete</button>
+                        <a href="{% url 'seller_dashboard' %}" class="btn btn-sparetrack-outline px-4">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
